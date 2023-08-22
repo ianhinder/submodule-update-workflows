@@ -1,0 +1,22 @@
+name: 'Trigger parent submodule update'
+
+on:
+  push:
+    branches:
+      - main    
+  workflow_dispatch:
+
+jobs:
+  notify:
+    name: 'Trigger parent submodule update'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: GitHub REST API call to run workflow in parent
+      env:
+        CI_TOKEN: ${{ secrets.SUBMODULE_UPDATE }}
+        PARENT_REPO: ianhinder/docker-gitops-test-pipeline
+        PARENT_BRANCH: main
+        WORKFLOW_ID: update-submodules.yml
+      run: |
+        curl -fL --retry 3 -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ env.CI_TOKEN }}" https://api.github.com/repos/${{ env.PARENT_REPO }}/actions/workflows/${{ env.WORKFLOW_ID }}/dispatches -d '{"ref":"${{ env.PARENT_BRANCH }}"}'
