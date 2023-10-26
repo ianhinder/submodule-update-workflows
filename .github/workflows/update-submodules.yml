@@ -2,6 +2,10 @@ name: 'Update submodules'
 
 on:
   workflow_call:
+    inputs:
+      submodules:
+        required: false
+        type: string
     secrets:
       SUBMODULE_UPDATE:
         required: true
@@ -22,7 +26,7 @@ jobs:
     - name: Git submodule update
       run: |
         git pull --recurse-submodules
-        git submodule update --remote
+        git submodule update --remote ${{ inputs.submodules }}
 
     - name: Commit update
       run: |
